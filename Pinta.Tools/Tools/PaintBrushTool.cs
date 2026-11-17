@@ -114,6 +114,7 @@ public sealed class PaintBrushTool : BaseBrushTool
 
 	protected override void OnMouseDown (Document document, ToolMouseEventArgs e)
 	{
+		last_point = null;
 		document.Layers.ToolLayer.Clear ();
 		document.Layers.ToolLayer.Hidden = false;
 
@@ -190,15 +191,29 @@ public sealed class PaintBrushTool : BaseBrushTool
 
 	protected override void OnMouseUp (Document document, ToolMouseEventArgs e)
 	{
+		FinalizeStroke (document);
+		base.OnMouseUp (document, e);
+	}
+
+	protected override void OnDeactivated (Document? document, BaseTool? newTool)
+	{
+		if (document != null && mouse_button != MouseButton.None)
+			FinalizeStroke (document);
+		else
+			CancelRepeatingDraw ();
+
+		base.OnDeactivated (document, newTool);
+	}
+
+	private void FinalizeStroke (Document document)
+	{
 		CancelRepeatingDraw ();
 		using Context g = new (document.Layers.CurrentUserLayer.Surface);
 
 		document.Layers.ToolLayer.Draw (g);
 
+		document.Layers.ToolLayer.Clear ();
 		document.Layers.ToolLayer.Hidden = true;
-
-		base.OnMouseUp (document, e);
-
 		active_brush?.DoMouseUp ();
 
 		if (stroke_dirty_rect != null) {
