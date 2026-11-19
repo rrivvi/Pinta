@@ -186,8 +186,22 @@ public sealed class CloneStampTool : BaseBrushTool
 
 	protected override void OnDeactivated (Document? document, BaseTool? newTool)
 	{
+		if (document != null && painting) {
+			using Cairo.Context g = new (document.Layers.CurrentUserLayer.Surface);
+			g.SetSourceSurface (document.Layers.ToolLayer.Surface, 0, 0);
+			g.Paint ();
+
+			painting = false;
+
+			document.Layers.ToolLayer.Clear ();
+			document.Layers.ToolLayer.Hidden = true;
+			document.Workspace.Invalidate ();
+		}
+
 		origin = null;
 		handle.Active = false;
+
+		base.OnDeactivated (document, newTool);
 	}
 
 	private void UpdateOriginHandle (Document document, int x, int y, bool move_event)

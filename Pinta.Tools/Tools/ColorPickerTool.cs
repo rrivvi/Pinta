@@ -144,6 +144,12 @@ public sealed class ColorPickerTool : BaseTool
 			tools.SetCurrentTool (nameof (PencilTool));
 	}
 
+	protected override void OnDeactivated (Document? document, BaseTool? newTool)
+	{
+		button_down = MouseButton.None;
+		base.OnDeactivated (document, newTool);
+	}
+
 	protected override void OnSaveSettings (ISettingsService settings)
 	{
 		base.OnSaveSettings (settings);

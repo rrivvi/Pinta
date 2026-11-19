@@ -103,18 +103,18 @@ public sealed class PencilTool : BaseTool
 
 	protected override void OnMouseUp (Document document, ToolMouseEventArgs e)
 	{
-		CommitBrushStroke (document);
+		FinalizePencilStroke (document);
 	}
 
 	protected override void OnDeactivated (Document? document, BaseTool? newTool)
 	{
 		if (document != null)
-			CommitBrushStroke (document);
+			FinalizePencilStroke (document);
 
 		base.OnDeactivated (document, newTool);
 	}
 
-	private void CommitBrushStroke (Document document)
+	private void FinalizePencilStroke (Document document)
 	{
 		if (undo_surface != null && surface_modified)
 			document.History.PushNewItem (new SimpleHistoryItem (Icon, Name, undo_surface, document.Layers.CurrentUserLayerIndex));

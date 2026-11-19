@@ -75,4 +75,12 @@ public sealed class PanTool : BaseTool
 		active = false;
 		SetCursor (DefaultCursor);
 	}
+
+	protected override void OnDeactivated (Document? document, BaseTool? newTool)
+	{
+		active = false;
+		SetCursor (DefaultCursor);
+
+		base.OnDeactivated (document, newTool);
+	}
 }
